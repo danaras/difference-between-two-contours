@@ -3,3 +3,5 @@ I have been working on a code in OpenFrameworks to calculate the difference betw
 Here is the output that i get when I run the code:
 
 ![](https://github.com/danaras/difference-between-two-contours/blob/master/Screen%20Shot%202016-03-18%20at%204.32.07%20PM.png)
+
+I used [ofxCv](https://github.com/kylemcdonald/ofxCv) in this example.
