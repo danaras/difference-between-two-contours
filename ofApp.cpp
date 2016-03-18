@@ -9,9 +9,9 @@ void ofApp::setup(){
     contourFinderCapture.setMinAreaRadius(50);
     contourFinderCapture.setMaxAreaRadius(200);
     eyeDrawing.load("images/eye2.jpg");
-    eyeDrawing.resize(500,250);
+    
     eye.load("images/eye.jpg");
-    eye.resize(500,250);
+    
     
     
     cout << eyeDrawing.getWidth()<<" "<< eyeDrawing.getHeight() << endl;
@@ -83,7 +83,7 @@ void ofApp::update(){
     blurDraw.update();
     blurEye.update();
     
-    vector<int> vAverage;
+//    vector<int> vAverage;
     
 //    for (int i = 0; i <20; i++){
 //        contourFinderAverage.setThreshold(i);
@@ -98,11 +98,31 @@ void ofApp::update(){
     
     
     
-   ofLog() << "Center: " << contourFinderAverage.getCenter(0) << " Width: " << contourFinderAverage.getBoundingRect(0).width << endl;
+  // ofLog() << "Center: " << contourFinderAverage.getCenter(0) << " Width: " << contourFinderAverage.getBoundingRect(0).width << endl;
    blurDraw.crop(contourFinderAverage.getBoundingRect(0).x, contourFinderAverage.getBoundingRect(0).y, contourFinderAverage.getBoundingRect(0).width, contourFinderAverage.getBoundingRect(0).height);
    blurEye.crop(contourFinderCapture.getBoundingRect(0).x, contourFinderCapture.getBoundingRect(0).y, contourFinderCapture.getBoundingRect(0).width, contourFinderCapture.getBoundingRect(0).height);
     blurDraw.resize(500, 250);
     blurEye.resize(500, 250);
+    
+    //compare two images by calculating an euclidian distance among pixels of the two images
+    auto& compareAveragePixels =blurDraw.getPixels();
+    auto& compareCapturePixels =blurEye.getPixels();
+    int pixelNumber =0;
+    vector<int> squaredDifference;
+    for(int y = 0; y < 250; y++){
+        for(int x = 0; x < 500; x++){
+            signed char difference = compareAveragePixels[pixelNumber] - compareCapturePixels[pixelNumber];
+            squaredDifference.push_back(difference * difference);
+            pixelNumber += 1;
+        }
+    }
+    eucldist = 0;
+    for(int i = 0; i<squaredDifference.size(); i++){
+        eucldist += squaredDifference[i];
+        
+    }
+    eucldist = sqrt(eucldist);
+    ofLog() << "euclidian distance: " << eucldist << endl;
     
 
 
@@ -112,8 +132,17 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    blurDraw.draw(5, 5);
-    blurEye.draw(5, blurDraw.getHeight()+10);
+     ofBackground(255, 255, 255);
+    eyeDrawing.resize(500,250);
+    eye.resize(500,250);
+    eyeDrawing.draw(5, 5);
+    eye.draw(5, 10 + eye.getHeight());
+    blurDraw.draw(10 + eye.getWidth(), 5);
+    blurEye.draw(10 + eye.getWidth(), 10 + eye.getHeight());
+    ofSetColor(0, 0, 0);
+    ofDrawRectangle(5, 5, 140, 22);
+    ofSetColor(255, 255, 255);
+    ofDrawBitmapString("Difference: " + ofToString(eucldist), 10, 20);//easiest way to put text on the screen
     
     //contourFinderAverage.draw();
 

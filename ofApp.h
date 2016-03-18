@@ -14,6 +14,8 @@ class ofApp : public ofBaseApp{
         ofImage grayEye, edgeEye, sobelEye, blurEye;
         ofImage grayDraw, edgeDraw, sobelDraw, blurDraw;
         ofImage cutDraw;
+        int eucldist;
+        
     
         ofxCv::ContourFinder contourFinderAverage, contourFinderCapture;
     
