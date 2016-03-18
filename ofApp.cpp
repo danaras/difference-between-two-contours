@@ -9,13 +9,8 @@ void ofApp::setup(){
     contourFinderCapture.setMinAreaRadius(50);
     contourFinderCapture.setMaxAreaRadius(200);
     eyeDrawing.load("images/eye2.jpg");
-    
     eye.load("images/eye.jpg");
     
-    
-    
-    cout << eyeDrawing.getWidth()<<" "<< eyeDrawing.getHeight() << endl;
-
 }
 
 //--------------------------------------------------------------
@@ -49,10 +44,8 @@ void ofApp::update(){
 
     auto& averagePixels = sobelDraw.getPixels();
     auto& capturePixels = sobelEye.getPixels();
-//    ofLog() << sobelDraw.getPixels().getNumChannels() << endl;
-//    ofLog() << sobelDraw.getWidth() << ',' << sobelDraw.getHeight() << endl;
     
-
+    //adjust the brightness for each image
     for(int y = 0; y < hDraw; y++){
         for(int x = 0; x < wDraw; x++){
             unsigned char brightness = averagePixels[iDraw];
@@ -71,11 +64,10 @@ void ofApp::update(){
                 capturePixels[iCapture] = brightness + 70;
             }
             iCapture += 1;
-            //ofLog() << "here2" << endl;
-            
         }
     }
-    //ofLog() << "here3" << endl;
+    
+    //apply sobel and blur
     sobelDraw.update();
     sobelEye.update();
     blur(sobelDraw, blurDraw, 10);
@@ -83,24 +75,13 @@ void ofApp::update(){
     blurDraw.update();
     blurEye.update();
     
-//    vector<int> vAverage;
-    
-//    for (int i = 0; i <20; i++){
-//        contourFinderAverage.setThreshold(i);
-//        vAverage[i] = contourFinderAverage.;
-//        
-//        
-//    }
-    
+
+    //find contours of the images and crop the images to the bounding boxes of the contours
     contourFinderAverage.findContours(blurDraw);
     contourFinderCapture.findContours(blurEye);
-//ofLog() << "here4" << endl;
-    
-    
-    
-  // ofLog() << "Center: " << contourFinderAverage.getCenter(0) << " Width: " << contourFinderAverage.getBoundingRect(0).width << endl;
-   blurDraw.crop(contourFinderAverage.getBoundingRect(0).x, contourFinderAverage.getBoundingRect(0).y, contourFinderAverage.getBoundingRect(0).width, contourFinderAverage.getBoundingRect(0).height);
-   blurEye.crop(contourFinderCapture.getBoundingRect(0).x, contourFinderCapture.getBoundingRect(0).y, contourFinderCapture.getBoundingRect(0).width, contourFinderCapture.getBoundingRect(0).height);
+
+    blurDraw.crop(contourFinderAverage.getBoundingRect(0).x, contourFinderAverage.getBoundingRect(0).y, contourFinderAverage.getBoundingRect(0).width, contourFinderAverage.getBoundingRect(0).height);
+    blurEye.crop(contourFinderCapture.getBoundingRect(0).x, contourFinderCapture.getBoundingRect(0).y, contourFinderCapture.getBoundingRect(0).width, contourFinderCapture.getBoundingRect(0).height);
     blurDraw.resize(500, 250);
     blurEye.resize(500, 250);
     
@@ -122,12 +103,7 @@ void ofApp::update(){
         
     }
     eucldist = sqrt(eucldist);
-    ofLog() << "euclidian distance: " << eucldist << endl;
     
-
-
-    
-
 }
 
 //--------------------------------------------------------------
@@ -143,63 +119,7 @@ void ofApp::draw(){
     ofDrawRectangle(5, 5, 140, 22);
     ofSetColor(255, 255, 255);
     ofDrawBitmapString("Difference: " + ofToString(eucldist), 10, 20);//easiest way to put text on the screen
-    
-    //contourFinderAverage.draw();
+  
 
 }
 
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
-}
-
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
-}
