@@ -4,6 +4,7 @@ using namespace ofxCv;
 using namespace cv;
 //--------------------------------------------------------------
 void ofApp::setup(){
+    
     contourFinderAverage.setMinAreaRadius(50);
     contourFinderAverage.setMaxAreaRadius(200);
     contourFinderCapture.setMinAreaRadius(50);
@@ -11,10 +12,6 @@ void ofApp::setup(){
     eyeDrawing.load("images/eye2.jpg");
     eye.load("images/eye.jpg");
     
-}
-
-//--------------------------------------------------------------
-void ofApp::update(){
     contourFinderAverage.setThreshold(8);
     
     
@@ -24,13 +21,13 @@ void ofApp::update(){
     
     Sobel(grayEye, sobelEye);
     Sobel(grayDraw, sobelDraw);
-   
+    
     
     grayEye.update();
     sobelEye.update();
     grayDraw.update();
     sobelDraw.update();
-  
+    
     
     int wDraw = sobelDraw.getWidth();
     int hDraw = sobelDraw.getHeight();
@@ -41,7 +38,7 @@ void ofApp::update(){
     int iCapture = 0;
     
     
-
+    
     auto& averagePixels = sobelDraw.getPixels();
     auto& capturePixels = sobelEye.getPixels();
     
@@ -53,7 +50,6 @@ void ofApp::update(){
                 averagePixels[iDraw] = brightness + 70;
             }
             iDraw += 1;
-          //ofLog() << "here1" << endl;
         }
     }
     
@@ -75,11 +71,11 @@ void ofApp::update(){
     blurDraw.update();
     blurEye.update();
     
-
+    
     //find contours of the images and crop the images to the bounding boxes of the contours
     contourFinderAverage.findContours(blurDraw);
     contourFinderCapture.findContours(blurEye);
-
+    
     blurDraw.crop(contourFinderAverage.getBoundingRect(0).x, contourFinderAverage.getBoundingRect(0).y, contourFinderAverage.getBoundingRect(0).width, contourFinderAverage.getBoundingRect(0).height);
     blurEye.crop(contourFinderCapture.getBoundingRect(0).x, contourFinderCapture.getBoundingRect(0).y, contourFinderCapture.getBoundingRect(0).width, contourFinderCapture.getBoundingRect(0).height);
     blurDraw.resize(500, 250);
@@ -90,6 +86,7 @@ void ofApp::update(){
     auto& compareCapturePixels =blurEye.getPixels();
     int pixelNumber =0;
     vector<int> squaredDifference;
+    squaredDifference.reserve(250 * 500);
     for(int y = 0; y < 250; y++){
         for(int x = 0; x < 500; x++){
             signed char difference = compareAveragePixels[pixelNumber] - compareCapturePixels[pixelNumber];

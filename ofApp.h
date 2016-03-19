@@ -20,7 +20,6 @@ class ofApp : public ofBaseApp{
         ofxCv::ContourFinder contourFinderAverage, contourFinderCapture;
     
 		void setup();
-		void update();
 		void draw();
 
 };
